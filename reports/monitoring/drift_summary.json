@@ -1,0 +1,21 @@
+{
+  "scenario": "drift",
+  "timestamp": "2026-10-26T08:06:33+00:00",
+  "n_clients": 2000,
+  "score_psi": 0.3476,
+  "score_status": "significant",
+  "drifted_features": [
+    "LIMIT_BAL",
+    "AGE",
+    "PAY_0",
+    "PAY_2",
+    "PAY_3",
+    "PAY_4",
+    "PAY_5",
+    "PAY_6"
+  ],
+  "mean_pd": 0.3405,
+  "predicted_default_share": 0.467,
+  "actual_default_share": 0.2265,
+  "roc_auc": 0.689
+}

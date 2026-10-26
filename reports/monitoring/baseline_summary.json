@@ -1,0 +1,12 @@
+{
+  "scenario": "baseline",
+  "timestamp": "2026-10-26T08:06:32+00:00",
+  "n_clients": 2000,
+  "score_psi": 0.0027,
+  "score_status": "stable",
+  "drifted_features": [],
+  "mean_pd": 0.2189,
+  "predicted_default_share": 0.238,
+  "actual_default_share": 0.2265,
+  "roc_auc": 0.77
+}
