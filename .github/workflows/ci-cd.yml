@@ -1,0 +1,140 @@
+name: CI/CD
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  PYTHON_VERSION: "3.11"
+  MLFLOW_DISABLE_AGENT_HINT: "1"
+
+jobs:
+  lint:
+    name: Линтинг (black, flake8)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+      - run: pip install black==26.10.1 flake8==7.4.1
+      - name: black
+        run: black --check --diff .
+      - name: flake8
+        run: flake8 .
+
+  test:
+    name: Валидация данных и тесты
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: pip
+          cache-dependency-path: requirements*.txt
+      - run: pip install -r requirements-dev.txt
+
+      - name: Загрузка датасета из DVC remote
+        run: dvc pull data/raw/UCI_Credit_Card.csv
+
+      - name: Валидация данных (Great Expectations)
+        run: |
+          python -m src.data.validation data/raw/UCI_Credit_Card.csv \
+            --report reports/validation_raw.json
+
+      - name: Unit-тесты (pytest)
+        run: pytest --cov --cov-report=term-missing
+
+      - name: Отчёт валидации
+        if: always()
+        uses: actions/upload-artifact@v5
+        with:
+          name: validation-report
+          path: reports/validation_raw.json
+
+  dvc:
+    name: DVC-пайплайн актуален
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: pip
+          cache-dependency-path: requirements*.txt
+      - run: pip install -r requirements.txt
+      - name: Загрузка данных и моделей
+        run: dvc pull
+      # Падает, если код, параметры или данные поменяли без `dvc repro`,
+      # т.е. закоммиченный dvc.lock не соответствует репозиторию.
+      - name: dvc status
+        run: dvc status --quiet || (dvc status && exit 1)
+      # dvc repro сам делает git add для dvc.lock (autostage), поэтому
+      # сравниваем с последним коммитом, а не с индексом.
+      - name: Подготовка данных воспроизводится
+        run: |
+          dvc repro --force validate prepare
+          git diff --exit-code HEAD -- dvc.lock data/expectations reports/validation_raw.json
+      - name: Метрики модели
+        run: dvc metrics show
+
+  docker:
+    name: Docker, API и мониторинг дрифта
+    needs: [lint, test, dvc]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: pip
+          cache-dependency-path: requirements*.txt
+      - run: pip install -r requirements.txt
+      - name: Загрузка модели, эталонного профиля и тестовой выборки
+        run: dvc pull prepare train evaluate
+
+      - name: Сборка и запуск контейнера
+        run: ./scripts/docker_build_run.sh
+
+      - name: Smoke-тест /predict
+        run: |
+          response=$(curl -sf -X POST http://127.0.0.1:8000/predict \
+            -H "Content-Type: application/json" -d @scripts/sample_request.json)
+          echo "$response"
+          echo "$response" | python -c "
+          import json, sys
+          body = json.load(sys.stdin)
+          assert body['default_prediction'] in (0, 1)
+          assert 0 <= body['default_probability'] <= 1
+          "
+
+      - name: Мониторинг — поток без дрифта
+        run: python -m src.monitoring.simulate_traffic --scenario baseline --fail-on-drift
+
+      - name: Мониторинг — поток с дрифтом (ожидаем срабатывание)
+        run: |
+          set +e
+          python -m src.monitoring.simulate_traffic --scenario drift --fail-on-drift
+          code=$?
+          set -e
+          if [ "$code" -ne 2 ]; then
+            echo "Ожидали, что PSI обнаружит дрифт (код 2), получили $code"
+            exit 1
+          fi
+
+      - name: Отчёты мониторинга
+        if: always()
+        uses: actions/upload-artifact@v5
+        with:
+          name: monitoring-report
+          path: reports/monitoring/
+
+      - name: Логи контейнера
+        if: failure()
+        run: docker logs credit-pd-api
