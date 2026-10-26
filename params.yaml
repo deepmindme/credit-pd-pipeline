@@ -1,0 +1,32 @@
+seed: 42
+
+data:
+  raw_path: data/raw/UCI_Credit_Card.csv
+  processed_dir: data/processed
+  test_size: 0.2
+
+features:
+  # Границы возрастных групп для биннинга (правая граница включается).
+  age_bins: [20, 25, 30, 35, 40, 50, 60, 100]
+
+train:
+  cv_folds: 5
+  search_scoring: roc_auc
+  # Порог классификации подбираем по CV на train, максимизируя F1.
+  threshold_scoring: f1
+  n_jobs: -1
+  experiments:
+    - logreg_raw
+    - logreg_fe
+    - random_forest_fe
+    - gradient_boosting_fe
+    - hist_gb_raw
+    - hist_gb_fe
+
+mlflow:
+  tracking_uri: sqlite:///mlflow.db
+  experiment_name: credit-default-pd
+  registered_model_name: credit-default-pd
+
+monitoring:
+  psi_bins: 10

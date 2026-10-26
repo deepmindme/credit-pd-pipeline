@@ -1,0 +1,22 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+.pytest_cache/
+.coverage
+coverage.xml
+htmlcov/
+.ipynb_checkpoints/
+
+# MLflow: локальное хранилище экспериментов (пути к артефактам абсолютные,
+# поэтому в git его не кладём — см. README, раздел про MLflow)
+mlflow.db
+mlruns/
+mlartifacts/
+
+# Системное
+.DS_Store
+.idea/
+.vscode/
