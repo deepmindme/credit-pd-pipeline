@@ -1,0 +1,347 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<title>Пайплайн PD-модели</title>
+<!-- Исходник презентации. PDF: docs/presentation.pdf (рендер через Playwright, 1280×720). -->
+<style>
+  @page { size: 1280px 720px; margin: 0; }
+  :root {
+    --ink: #1d2433;
+    --muted: #5b6475;
+    --accent: #1f5fae;
+    --accent-soft: #e8f0fb;
+    --warn: #c2571a;
+    --line: #d9dee7;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #fff; color: var(--ink);
+         font-family: "Helvetica Neue", Arial, sans-serif; }
+  .slide { width: 1280px; height: 720px; padding: 52px 64px 40px; position: relative;
+           page-break-after: always; overflow: hidden; display: flex; flex-direction: column; }
+  .slide:last-child { page-break-after: auto; }
+  h1 { font-size: 44px; margin: 0 0 12px; line-height: 1.15; }
+  h2 { font-size: 32px; margin: 0 0 22px; color: var(--ink); }
+  h2 span { color: var(--accent); }
+  p, li { font-size: 21px; line-height: 1.45; }
+  ul { margin: 0; padding-left: 24px; }
+  li { margin-bottom: 9px; }
+  .muted { color: var(--muted); }
+  .num { position: absolute; right: 40px; bottom: 22px; font-size: 14px; color: var(--muted); }
+  .cols { display: flex; gap: 40px; flex: 1; min-height: 0; }
+  .cols > div { flex: 1; min-width: 0; }
+  .img { display: flex; align-items: center; justify-content: center; }
+  .img img { max-width: 100%; max-height: 520px; object-fit: contain; }
+  table { border-collapse: collapse; width: 100%; font-size: 18px; }
+  th, td { padding: 7px 10px; border-bottom: 1px solid var(--line); text-align: left; }
+  th { color: var(--muted); font-weight: 600; font-size: 15px; text-transform: uppercase; letter-spacing: .03em; }
+  td.r, th.r { text-align: right; }
+  tr.best td { background: var(--accent-soft); font-weight: 600; }
+  .kpis { display: flex; gap: 18px; margin: 10px 0 24px; }
+  .kpi { flex: 1; border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; }
+  .kpi b { display: block; font-size: 34px; color: var(--accent); }
+  .kpi span { font-size: 15px; color: var(--muted); }
+  .flow { display: flex; align-items: stretch; gap: 10px; margin: 8px 0 22px; }
+  .step { flex: 1; border: 2px solid var(--accent); border-radius: 10px; padding: 16px 14px;
+          background: var(--accent-soft); }
+  .step b { display: block; font-size: 19px; margin-bottom: 4px; }
+  .step span { font-size: 17px; color: var(--muted); line-height: 1.35; display: block; }
+  .arrow { align-self: center; font-size: 26px; color: var(--accent); }
+  .band { display: flex; gap: 10px; }
+  .band div { flex: 1; border: 1px dashed var(--line); border-radius: 8px; padding: 14px 14px;
+              font-size: 18px; color: var(--muted); }
+  .band b { color: var(--ink); }
+  code { font-family: Menlo, Consolas, monospace; font-size: .88em; background: #f2f4f8;
+         padding: 1px 6px; border-radius: 4px; }
+  pre { font-family: Menlo, Consolas, monospace; font-size: 15px; background: #f5f7fa;
+        border: 1px solid var(--line); border-radius: 8px; padding: 14px 16px; margin: 0 0 14px;
+        white-space: pre-wrap; }
+  .title { justify-content: center; background: linear-gradient(135deg, #f4f8fe 0%, #ffffff 60%); }
+  .title h1 { font-size: 54px; }
+  .tag { display: inline-block; margin: 4px 8px 0 0; padding: 5px 12px; border-radius: 20px;
+         background: var(--accent-soft); color: var(--accent); font-size: 17px; }
+  .note { font-size: 17px; color: var(--muted); margin-top: auto; }
+  .warn { color: var(--warn); font-weight: 600; }
+</style>
+</head>
+<body>
+
+<section class="slide title">
+  <p class="muted" style="font-size:20px;margin:0 0 10px">Итоговый проект · Автоматизация разработки и тестирования ML-моделей</p>
+  <h1>Пайплайн PD-модели<br>для клиентов кредитных карт</h1>
+  <p style="font-size:24px;max-width:900px">Сквозная автоматизация: от проверки входящих данных
+    до REST API в Docker и мониторинга дрифта</p>
+  <div style="margin-top:18px">
+    <span class="tag">Great Expectations</span><span class="tag">scikit-learn</span>
+    <span class="tag">MLflow</span><span class="tag">DVC</span><span class="tag">pytest</span>
+    <span class="tag">GitHub Actions</span><span class="tag">FastAPI</span><span class="tag">Docker</span>
+    <span class="tag">PSI</span>
+  </div>
+  <p class="muted" style="margin-top:40px;font-size:18px">github.com/deepmindme/credit-pd-pipeline</p>
+</section>
+
+<section class="slide">
+  <h2>Задача и <span>данные</span></h2>
+  <div class="cols">
+    <div>
+      <ul>
+        <li>Я в роли ML-инженера кредитного отдела: нужно автоматизировать разработку и обслуживание
+          модели вероятности дефолта (PD).</li>
+        <li>Решение должно быть <b>воспроизводимым, тестируемым и готовым к развёртыванию</b>.</li>
+        <li>Датасет UCI Default of Credit Card Clients: 30 000 клиентов тайваньского банка,
+          апрель–сентябрь 2005.</li>
+        <li>23 признака: лимит, демография, статусы платежей, суммы счетов и платежей за 6 месяцев.</li>
+        <li>Таргет: дефолт в октябре. Таких клиентов <b>22%</b>.</li>
+      </ul>
+    </div>
+    <div class="img"><img src="../reports/eda/default_rate_by_pay0.png"></div>
+  </div>
+  <div class="num">2</div>
+</section>
+
+<section class="slide">
+  <h2>Архитектура <span>пайплайна</span></h2>
+  <div class="flow">
+    <div class="step"><b>validate</b><span>Great Expectations, 78 правил; при нарушении пайплайн стоп</span></div>
+    <div class="arrow">→</div>
+    <div class="step"><b>prepare</b><span>типы, дубликаты, стратифицированный сплит 80/20</span></div>
+    <div class="arrow">→</div>
+    <div class="step"><b>train</b><span>6 экспериментов, CV-поиск, порог, MLflow + Registry</span></div>
+    <div class="arrow">→</div>
+    <div class="step"><b>evaluate</b><span>метрики, графики, gains-таблица, эталон для PSI</span></div>
+  </div>
+  <div class="band" style="margin-bottom:14px">
+    <div><b>DVC</b> — <code>dvc.yaml</code> описывает стадии, данные и модели версионируются, remote — ветка
+      <code>dvc-storage</code> по HTTP</div>
+    <div><b>MLflow</b> — параметры, метрики, артефакты, модели, датасеты; вложенные runs поиска</div>
+  </div>
+  <div class="band">
+    <div><b>FastAPI + Docker</b> — <code>/predict</code>, <code>/predict/batch</code>, <code>/health</code>; лёгкий образ для инференса</div>
+    <div><b>Мониторинг</b> — поток заявок в API, PSI по скорам и 23 признакам, гейт <code>--fail-on-drift</code></div>
+    <div><b>CI/CD</b> — black, flake8, GE-валидация, 81 тест, <code>dvc status</code>, сборка образа, smoke-тест</div>
+  </div>
+  <p class="note">Главное решение: очистка категорий и feature engineering живут <b>внутри</b> sklearn Pipeline,
+    поэтому API принимает исходные 23 поля, а train/serve skew исключён.</p>
+  <div class="num">3</div>
+</section>
+
+<section class="slide">
+  <h2>Данные: <span>EDA и валидация</span></h2>
+  <div class="cols">
+    <div>
+      <ul>
+        <li>Пропусков нет, но есть <b>35 дубликатов</b> без учёта ID. Удаляю, чтобы не было утечки между train и test.</li>
+        <li>Недокументированные коды: <code>EDUCATION</code> 0/5/6, <code>MARRIAGE</code> 0. В suite они разрешены, в модели сведены к «другое».</li>
+        <li>Самый сильный сигнал — история просрочек <code>PAY_x</code>. Сырые суммы счетов почти бесполезны (IV ≈ 0.01).</li>
+      </ul>
+    </div>
+    <div>
+      <p style="margin-top:0"><b>Great Expectations suite</b> (78 правил):</p>
+      <ul>
+        <li>состав колонок, null, типы, уникальность ID;</li>
+        <li>коды категорий, диапазоны (возраст 18–100, платежи ≥ 0);</li>
+        <li>таргет ∈ {0, 1}, доля дефолтов 5–50%.</li>
+      </ul>
+      <p>CLI возвращает код 1 при нарушении. В тестах проверены <b>14 видов аномалий</b>,
+        и отдельный тест падает, если аномалии появятся в реальной выгрузке.</p>
+    </div>
+  </div>
+  <div class="num">4</div>
+</section>
+
+<section class="slide">
+  <h2>Feature <span>engineering</span></h2>
+  <div class="cols">
+    <div>
+      <table>
+        <tr><th>Признак</th><th>Смысл</th></tr>
+        <tr><td><code>PAY_DELAY_COUNT / MAX</code></td><td>месяцы с просрочкой, макс. просрочка</td></tr>
+        <tr><td><code>PAY_NO_USE / FULL_COUNT</code></td><td>не пользовался / гасил полностью</td></tr>
+        <tr><td><code>UTIL_LAST / MEAN / MAX</code></td><td>загрузка лимита</td></tr>
+        <tr><td><code>BILL_TREND</code></td><td>рост долга за полгода</td></tr>
+        <tr><td><code>PAY_TO_BILL_RATIO</code></td><td>платёж t к счёту t−1</td></tr>
+        <tr><td><code>AGE_BIN</code></td><td>U-образный риск по возрасту</td></tr>
+      </table>
+      <p style="margin-top:18px">Новый <code>PAY_DELAY_COUNT</code> оказался <b>самым информативным</b>
+        признаком: IV 0.86 против 0.83 у <code>PAY_0</code>.</p>
+    </div>
+    <div class="img"><img src="../reports/eda/information_value.png" style="max-height:540px"></div>
+  </div>
+  <div class="num">5</div>
+</section>
+
+<section class="slide">
+  <h2>Эксперименты: <span>6 моделей, выбор по CV</span></h2>
+  <div class="cols">
+    <div style="flex:1.15">
+      <table>
+        <tr><th>Эксперимент</th><th class="r">CV AUC</th><th class="r">Test AUC</th><th class="r">F1</th><th class="r">Время</th></tr>
+        <tr><td>logreg_raw</td><td class="r">0.726</td><td class="r">0.719</td><td class="r">0.495</td><td class="r">2 с</td></tr>
+        <tr><td>logreg_fe</td><td class="r">0.766</td><td class="r">0.758</td><td class="r">0.529</td><td class="r">1 с</td></tr>
+        <tr><td>random_forest_fe</td><td class="r">0.788</td><td class="r">0.778</td><td class="r">0.539</td><td class="r">97 с</td></tr>
+        <tr class="best"><td>gradient_boosting_fe</td><td class="r">0.789</td><td class="r">0.779</td><td class="r">0.536</td><td class="r">93 с</td></tr>
+        <tr><td>hist_gb_raw</td><td class="r">0.786</td><td class="r">0.774</td><td class="r">0.527</td><td class="r">7 с</td></tr>
+        <tr><td>hist_gb_fe</td><td class="r">0.789</td><td class="r">0.780</td><td class="r">0.540</td><td class="r">8 с</td></tr>
+      </table>
+      <ul style="margin-top:18px">
+        <li>FE: <b>+0.040</b> AUC логрегрессии и лишь +0.002 бустингу.</li>
+        <li>Ансамбли различаются меньше, чем на 1 std CV (≈ 0.008).</li>
+        <li>Test для выбора модели не используется.</li>
+      </ul>
+    </div>
+    <div class="img"><img src="../reports/mlflow/roc_auc_by_experiment.png"></div>
+  </div>
+  <div class="num">6</div>
+</section>
+
+<section class="slide">
+  <h2>MLflow <span>Tracking и Registry</span></h2>
+  <div class="img" style="margin-bottom:22px"><img src="../reports/mlflow/ui_runs_table.png" style="max-height:330px;border:1px solid var(--line);border-radius:8px"></div>
+  <div class="cols">
+    <div><ul>
+      <li><b>Параметры</b>: лучшие гиперпараметры, тип поиска, порог.</li>
+      <li><b>Метрики</b>: CV AUC ± std, test AUC/Gini/KS/P/R/F1/Brier.</li>
+    </ul></div>
+    <div><ul>
+      <li><b>Артефакты</b>: ROC, PR, матрица ошибок, importance, <code>cv_results</code>.</li>
+      <li><b>Модель</b> с сигнатурой и кодом; <b>86 вложенных runs</b> поиска.</li>
+    </ul></div>
+    <div><ul>
+      <li>Лучшая модель зарегистрирована как <code>credit-default-pd</code> с алиасом <code>champion</code>.</li>
+    </ul></div>
+  </div>
+  <div class="num">7</div>
+</section>
+
+<section class="slide">
+  <h2>Итоговая модель: <span>GradientBoosting + FE</span></h2>
+  <div class="kpis">
+    <div class="kpi"><b>0.779</b><span>ROC-AUC на test</span></div>
+    <div class="kpi"><b>0.559</b><span>Gini</span></div>
+    <div class="kpi"><b>0.428</b><span>KS</span></div>
+    <div class="kpi"><b>0.517</b><span>Precision</span></div>
+    <div class="kpi"><b>0.557</b><span>Recall</span></div>
+    <div class="kpi"><b>0.536</b><span>F1</span></div>
+  </div>
+  <div class="cols">
+    <div class="img"><img src="../reports/figures/roc_curve.png" style="max-height:380px"></div>
+    <div class="img"><img src="../reports/mlflow/calibration.png" style="max-height:380px"></div>
+    <div>
+      <ul>
+        <li>Порог <b>0.277</b> подобран по F1 на CV по train. При пороге 0.5 нашлось бы только 35% дефолтов.</li>
+        <li>PD <b>откалибрована</b>: по децилям расхождение с фактом не больше 2 п.п.</li>
+        <li>Логрегрессия с <code>balanced</code> завышает риск <span class="warn">в 2–3 раза</span>.</li>
+        <li>Топ-10% по PD содержат 31% дефолтов.</li>
+      </ul>
+    </div>
+  </div>
+  <div class="num">8</div>
+</section>
+
+<section class="slide">
+  <h2>DVC и <span>CI/CD</span></h2>
+  <div class="cols">
+    <div>
+      <pre>$ dvc repro
+validate → prepare → train → evaluate
+
+$ dvc metrics show
+reports/metrics.json  roc_auc 0.7794  gini 0.5587
+                      f1 0.5363  threshold 0.2767</pre>
+      <ul>
+        <li>Под DVC: датасет, train/test, модель, эталон для PSI.</li>
+        <li>Remote — ветка <code>dvc-storage</code> по HTTP: <code>dvc pull</code> без ключей.</li>
+        <li>Параметры собраны в <code>params.yaml</code>.</li>
+      </ul>
+    </div>
+    <div>
+      <p style="margin-top:0"><b>GitHub Actions</b>, на каждый push:</p>
+      <ul>
+        <li><b>lint</b>: black, flake8;</li>
+        <li><b>test</b>: <code>dvc pull</code> → <b>валидация GE</b> → 81 тест pytest;</li>
+        <li><b>dvc</b>: <code>dvc.lock</code> соответствует коду, стадии воспроизводятся байт в байт;</li>
+        <li><b>docker</b>: сборка образа, запуск, smoke-тест <code>/predict</code>, мониторинг PSI.</li>
+      </ul>
+    </div>
+  </div>
+  <div class="num">9</div>
+</section>
+
+<section class="slide">
+  <h2>REST API <span>и Docker</span></h2>
+  <div class="cols">
+    <div>
+      <pre>$ ./scripts/docker_build_run.sh   # сборка, запуск, проверка /health
+
+$ curl -X POST localhost:8000/predict \
+    -H "Content-Type: application/json" \
+    -d @scripts/sample_request.json
+{"default_prediction": 1,
+ "default_probability": 0.621562,
+ "threshold": 0.276678}</pre>
+      <img src="swagger.png" style="width:100%;border:1px solid var(--line);border-radius:8px">
+    </div>
+    <div>
+      <ul>
+        <li><code>POST /predict</code>: клиент → класс и PD.</li>
+        <li><code>POST /predict/batch</code>: до 1000 клиентов.</li>
+        <li><code>GET /health</code>: версия модели и порог.</li>
+        <li>Pydantic-схема повторяет правила GE: возраст 12 или <code>PAY_0 = 11</code> → 422.</li>
+        <li>Образ <code>python:3.11-slim</code> только с зависимостями инференса, без root, с <code>HEALTHCHECK</code>.</li>
+        <li>Без модели сервис не падает: <code>/health</code> и <code>/predict</code> отвечают 503.</li>
+        <li>Проверено локально (контейнер <i>healthy</i>, ответ выше) и в CI на каждый push.</li>
+      </ul>
+    </div>
+  </div>
+  <div class="num">10</div>
+</section>
+
+<section class="slide">
+  <h2>Мониторинг: <span>Population Stability Index</span></h2>
+  <div class="cols">
+    <div>
+      <ul>
+        <li>Скрипт берёт 2000 клиентов из test и отправляет их в API.</li>
+        <li>PSI считается по распределению PD и по каждому из 23 признаков; эталон строится по train.</li>
+      </ul>
+      <table style="margin-top:14px">
+        <tr><th>Сценарий</th><th class="r">PSI скоров</th><th>Статус</th></tr>
+        <tr><td>baseline</td><td class="r">0.003</td><td>stable</td></tr>
+        <tr><td>drift<br><span class="muted" style="font-size:15px">моложе, лимиты −40%, больше просрочек</span></td><td class="r">0.348</td><td class="warn">significant</td></tr>
+      </table>
+      <p style="font-size:18px;margin-top:14px">В drift-сценарии сработали <code>AGE</code>, <code>LIMIT_BAL</code>,
+        <code>PAY_0…PAY_6</code>. В CI это гейт: код 2 при PSI ≥ 0.25.</p>
+    </div>
+    <div class="img"><img src="../reports/monitoring/drift_score_shift.png"></div>
+  </div>
+  <div class="num">11</div>
+</section>
+
+<section class="slide">
+  <h2>Итоги и <span>что дальше</span></h2>
+  <div class="cols">
+    <div>
+      <p style="margin-top:0"><b>Сделано</b></p>
+      <ul>
+        <li>Воспроизводимый пайплайн одной командой <code>dvc repro</code>.</li>
+        <li>Данные проверяются до обучения и в каждом CI-прогоне.</li>
+        <li>6 экспериментов в MLflow; модель откалибрована, ROC-AUC 0.779.</li>
+        <li>API в Docker, 81 тест, мониторинг дрифта с гейтом.</li>
+      </ul>
+    </div>
+    <div>
+      <p style="margin-top:0"><b>Что улучшить</b></p>
+      <ul>
+        <li>Подбирать порог по стоимости ошибок, а не по F1.</li>
+        <li>Убрать пол из признаков (требования недискриминации).</li>
+        <li>Вынести MLflow на сервер, DVC remote — в S3.</li>
+        <li>Out-of-time валидация на данных за другие периоды.</li>
+        <li>Перейти на <code>hist_gb_fe</code>: то же качество в 12 раз быстрее.</li>
+      </ul>
+    </div>
+  </div>
+  <div class="num">12</div>
+</section>
+
+</body>
+</html>
