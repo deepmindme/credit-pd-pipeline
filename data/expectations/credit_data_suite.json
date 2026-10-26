@@ -1,0 +1,940 @@
+{
+  "name": "credit_data_suite",
+  "expectations": [
+    {
+      "type": "expect_table_columns_to_match_set",
+      "kwargs": {
+        "column_set": [
+          "ID",
+          "LIMIT_BAL",
+          "SEX",
+          "EDUCATION",
+          "MARRIAGE",
+          "AGE",
+          "PAY_0",
+          "PAY_2",
+          "PAY_3",
+          "PAY_4",
+          "PAY_5",
+          "PAY_6",
+          "BILL_AMT1",
+          "BILL_AMT2",
+          "BILL_AMT3",
+          "BILL_AMT4",
+          "BILL_AMT5",
+          "BILL_AMT6",
+          "PAY_AMT1",
+          "PAY_AMT2",
+          "PAY_AMT3",
+          "PAY_AMT4",
+          "PAY_AMT5",
+          "PAY_AMT6",
+          "default.payment.next.month"
+        ]
+      },
+      "meta": {},
+      "severity": "critical"
+    },
+    {
+      "type": "expect_table_row_count_to_be_between",
+      "kwargs": {
+        "min_value": 1
+      },
+      "meta": {},
+      "severity": "critical"
+    },
+    {
+      "type": "expect_column_values_to_be_unique",
+      "kwargs": {
+        "column": "ID"
+      },
+      "meta": {},
+      "severity": "critical"
+    },
+    {
+      "type": "expect_column_values_to_not_be_null",
+      "kwargs": {
+        "column": "ID"
+      },
+      "meta": {},
+      "severity": "critical"
+    },
+    {
+      "type": "expect_column_values_to_be_in_type_list",
+      "kwargs": {
+        "column": "ID",
+        "type_list": [
+          "int64",
+          "float64",
+          "Int64",
+          "Float64"
+        ]
+      },
+      "meta": {},
+      "severity": "critical"
+    },
+    {
+      "type": "expect_column_values_to_not_be_null",
+      "kwargs": {
+        "column": "LIMIT_BAL"
+      },
+      "meta": {},
+      "severity": "critical"
+    },
+    {
+      "type": "expect_column_values_to_be_in_type_list",
+      "kwargs": {
+        "column": "LIMIT_BAL",
+        "type_list": [
+          "int64",
+          "float64",
+          "Int64",
+          "Float64"
+        ]
+      },
+      "meta": {},
+      "severity": "critical"
+    },
+    {
+      "type": "expect_column_values_to_not_be_null",
+      "kwargs": {
+        "column": "SEX"
+      },
+      "meta": {},
+      "severity": "critical"
+    },
+    {
+      "type": "expect_column_values_to_be_in_type_list",
+      "kwargs": {
+        "column": "SEX",
+        "type_list": [
+          "int64",
+          "float64",
+          "Int64",
+          "Float64"
+        ]
+      },
+      "meta": {},
+      "severity": "critical"
+    },
+    {
+      "type": "expect_column_values_to_not_be_null",
+      "kwargs": {
+        "column": "EDUCATION"
+      },
+      "meta": {},
+      "severity": "critical"
+    },
+    {
+      "type": "expect_column_values_to_be_in_type_list",
+      "kwargs": {
+        "column": "EDUCATION",
+        "type_list": [
+          "int64",
+          "float64",
+          "Int64",
+          "Float64"
+        ]
+      },
+      "meta": {},
+      "severity": "critical"
+    },
+    {
+      "type": "expect_column_values_to_not_be_null",
+      "kwargs": {
+        "column": "MARRIAGE"
+      },
+      "meta": {},
+      "severity": "critical"
+    },
+    {
+      "type": "expect_column_values_to_be_in_type_list",
+      "kwargs": {
+        "column": "MARRIAGE",
+        "type_list": [
+          "int64",
+          "float64",
+          "Int64",
+          "Float64"
+        ]
+      },
+      "meta": {},
+      "severity": "critical"
+    },
+    {
+      "type": "expect_column_values_to_not_be_null",
+      "kwargs": {
+        "column": "AGE"
+      },
+      "meta": {},
+      "severity": "critical"
+    },
+    {
+      "type": "expect_column_values_to_be_in_type_list",
+      "kwargs": {
+        "column": "AGE",
+        "type_list": [
+          "int64",
+          "float64",
+          "Int64",
+          "Float64"
+        ]
+      },
+      "meta": {},
+      "severity": "critical"
+    },
+    {
+      "type": "expect_column_values_to_not_be_null",
+      "kwargs": {
+        "column": "PAY_0"
+      },
+      "meta": {},
+      "severity": "critical"
+    },
+    {
+      "type": "expect_column_values_to_be_in_type_list",
+      "kwargs": {
+        "column": "PAY_0",
+        "type_list": [
+          "int64",
+          "float64",
+          "Int64",
+          "Float64"
+        ]
+      },
+      "meta": {},
+      "severity": "critical"
+    },
+    {
+      "type": "expect_column_values_to_not_be_null",
+      "kwargs": {
+        "column": "PAY_2"
+      },
+      "meta": {},
+      "severity": "critical"
+    },
+    {
+      "type": "expect_column_values_to_be_in_type_list",
+      "kwargs": {
+        "column": "PAY_2",
+        "type_list": [
+          "int64",
+          "float64",
+          "Int64",
+          "Float64"
+        ]
+      },
+      "meta": {},
+      "severity": "critical"
+    },
+    {
+      "type": "expect_column_values_to_not_be_null",
+      "kwargs": {
+        "column": "PAY_3"
+      },
+      "meta": {},
+      "severity": "critical"
+    },
+    {
+      "type": "expect_column_values_to_be_in_type_list",
+      "kwargs": {
+        "column": "PAY_3",
+        "type_list": [
+          "int64",
+          "float64",
+          "Int64",
+          "Float64"
+        ]
+      },
+      "meta": {},
+      "severity": "critical"
+    },
+    {
+      "type": "expect_column_values_to_not_be_null",
+      "kwargs": {
+        "column": "PAY_4"
+      },
+      "meta": {},
+      "severity": "critical"
+    },
+    {
+      "type": "expect_column_values_to_be_in_type_list",
+      "kwargs": {
+        "column": "PAY_4",
+        "type_list": [
+          "int64",
+          "float64",
+          "Int64",
+          "Float64"
+        ]
+      },
+      "meta": {},
+      "severity": "critical"
+    },
+    {
+      "type": "expect_column_values_to_not_be_null",
+      "kwargs": {
+        "column": "PAY_5"
+      },
+      "meta": {},
+      "severity": "critical"
+    },
+    {
+      "type": "expect_column_values_to_be_in_type_list",
+      "kwargs": {
+        "column": "PAY_5",
+        "type_list": [
+          "int64",
+          "float64",
+          "Int64",
+          "Float64"
+        ]
+      },
+      "meta": {},
+      "severity": "critical"
+    },
+    {
+      "type": "expect_column_values_to_not_be_null",
+      "kwargs": {
+        "column": "PAY_6"
+      },
+      "meta": {},
+      "severity": "critical"
+    },
+    {
+      "type": "expect_column_values_to_be_in_type_list",
+      "kwargs": {
+        "column": "PAY_6",
+        "type_list": [
+          "int64",
+          "float64",
+          "Int64",
+          "Float64"
+        ]
+      },
+      "meta": {},
+      "severity": "critical"
+    },
+    {
+      "type": "expect_column_values_to_not_be_null",
+      "kwargs": {
+        "column": "BILL_AMT1"
+      },
+      "meta": {},
+      "severity": "critical"
+    },
+    {
+      "type": "expect_column_values_to_be_in_type_list",
+      "kwargs": {
+        "column": "BILL_AMT1",
+        "type_list": [
+          "int64",
+          "float64",
+          "Int64",
+          "Float64"
+        ]
+      },
+      "meta": {},
+      "severity": "critical"
+    },
+    {
+      "type": "expect_column_values_to_not_be_null",
+      "kwargs": {
+        "column": "BILL_AMT2"
+      },
+      "meta": {},
+      "severity": "critical"
+    },
+    {
+      "type": "expect_column_values_to_be_in_type_list",
+      "kwargs": {
+        "column": "BILL_AMT2",
+        "type_list": [
+          "int64",
+          "float64",
+          "Int64",
+          "Float64"
+        ]
+      },
+      "meta": {},
+      "severity": "critical"
+    },
+    {
+      "type": "expect_column_values_to_not_be_null",
+      "kwargs": {
+        "column": "BILL_AMT3"
+      },
+      "meta": {},
+      "severity": "critical"
+    },
+    {
+      "type": "expect_column_values_to_be_in_type_list",
+      "kwargs": {
+        "column": "BILL_AMT3",
+        "type_list": [
+          "int64",
+          "float64",
+          "Int64",
+          "Float64"
+        ]
+      },
+      "meta": {},
+      "severity": "critical"
+    },
+    {
+      "type": "expect_column_values_to_not_be_null",
+      "kwargs": {
+        "column": "BILL_AMT4"
+      },
+      "meta": {},
+      "severity": "critical"
+    },
+    {
+      "type": "expect_column_values_to_be_in_type_list",
+      "kwargs": {
+        "column": "BILL_AMT4",
+        "type_list": [
+          "int64",
+          "float64",
+          "Int64",
+          "Float64"
+        ]
+      },
+      "meta": {},
+      "severity": "critical"
+    },
+    {
+      "type": "expect_column_values_to_not_be_null",
+      "kwargs": {
+        "column": "BILL_AMT5"
+      },
+      "meta": {},
+      "severity": "critical"
+    },
+    {
+      "type": "expect_column_values_to_be_in_type_list",
+      "kwargs": {
+        "column": "BILL_AMT5",
+        "type_list": [
+          "int64",
+          "float64",
+          "Int64",
+          "Float64"
+        ]
+      },
+      "meta": {},
+      "severity": "critical"
+    },
+    {
+      "type": "expect_column_values_to_not_be_null",
+      "kwargs": {
+        "column": "BILL_AMT6"
+      },
+      "meta": {},
+      "severity": "critical"
+    },
+    {
+      "type": "expect_column_values_to_be_in_type_list",
+      "kwargs": {
+        "column": "BILL_AMT6",
+        "type_list": [
+          "int64",
+          "float64",
+          "Int64",
+          "Float64"
+        ]
+      },
+      "meta": {},
+      "severity": "critical"
+    },
+    {
+      "type": "expect_column_values_to_not_be_null",
+      "kwargs": {
+        "column": "PAY_AMT1"
+      },
+      "meta": {},
+      "severity": "critical"
+    },
+    {
+      "type": "expect_column_values_to_be_in_type_list",
+      "kwargs": {
+        "column": "PAY_AMT1",
+        "type_list": [
+          "int64",
+          "float64",
+          "Int64",
+          "Float64"
+        ]
+      },
+      "meta": {},
+      "severity": "critical"
+    },
+    {
+      "type": "expect_column_values_to_not_be_null",
+      "kwargs": {
+        "column": "PAY_AMT2"
+      },
+      "meta": {},
+      "severity": "critical"
+    },
+    {
+      "type": "expect_column_values_to_be_in_type_list",
+      "kwargs": {
+        "column": "PAY_AMT2",
+        "type_list": [
+          "int64",
+          "float64",
+          "Int64",
+          "Float64"
+        ]
+      },
+      "meta": {},
+      "severity": "critical"
+    },
+    {
+      "type": "expect_column_values_to_not_be_null",
+      "kwargs": {
+        "column": "PAY_AMT3"
+      },
+      "meta": {},
+      "severity": "critical"
+    },
+    {
+      "type": "expect_column_values_to_be_in_type_list",
+      "kwargs": {
+        "column": "PAY_AMT3",
+        "type_list": [
+          "int64",
+          "float64",
+          "Int64",
+          "Float64"
+        ]
+      },
+      "meta": {},
+      "severity": "critical"
+    },
+    {
+      "type": "expect_column_values_to_not_be_null",
+      "kwargs": {
+        "column": "PAY_AMT4"
+      },
+      "meta": {},
+      "severity": "critical"
+    },
+    {
+      "type": "expect_column_values_to_be_in_type_list",
+      "kwargs": {
+        "column": "PAY_AMT4",
+        "type_list": [
+          "int64",
+          "float64",
+          "Int64",
+          "Float64"
+        ]
+      },
+      "meta": {},
+      "severity": "critical"
+    },
+    {
+      "type": "expect_column_values_to_not_be_null",
+      "kwargs": {
+        "column": "PAY_AMT5"
+      },
+      "meta": {},
+      "severity": "critical"
+    },
+    {
+      "type": "expect_column_values_to_be_in_type_list",
+      "kwargs": {
+        "column": "PAY_AMT5",
+        "type_list": [
+          "int64",
+          "float64",
+          "Int64",
+          "Float64"
+        ]
+      },
+      "meta": {},
+      "severity": "critical"
+    },
+    {
+      "type": "expect_column_values_to_not_be_null",
+      "kwargs": {
+        "column": "PAY_AMT6"
+      },
+      "meta": {},
+      "severity": "critical"
+    },
+    {
+      "type": "expect_column_values_to_be_in_type_list",
+      "kwargs": {
+        "column": "PAY_AMT6",
+        "type_list": [
+          "int64",
+          "float64",
+          "Int64",
+          "Float64"
+        ]
+      },
+      "meta": {},
+      "severity": "critical"
+    },
+    {
+      "type": "expect_column_values_to_not_be_null",
+      "kwargs": {
+        "column": "default.payment.next.month"
+      },
+      "meta": {},
+      "severity": "critical"
+    },
+    {
+      "type": "expect_column_values_to_be_in_type_list",
+      "kwargs": {
+        "column": "default.payment.next.month",
+        "type_list": [
+          "int64",
+          "float64",
+          "Int64",
+          "Float64"
+        ]
+      },
+      "meta": {},
+      "severity": "critical"
+    },
+    {
+      "type": "expect_column_values_to_be_in_set",
+      "kwargs": {
+        "column": "SEX",
+        "value_set": [
+          1,
+          2
+        ]
+      },
+      "meta": {},
+      "severity": "critical"
+    },
+    {
+      "type": "expect_column_values_to_be_in_set",
+      "kwargs": {
+        "column": "EDUCATION",
+        "value_set": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6
+        ]
+      },
+      "meta": {},
+      "severity": "critical"
+    },
+    {
+      "type": "expect_column_values_to_be_in_set",
+      "kwargs": {
+        "column": "MARRIAGE",
+        "value_set": [
+          0,
+          1,
+          2,
+          3
+        ]
+      },
+      "meta": {},
+      "severity": "critical"
+    },
+    {
+      "type": "expect_column_values_to_be_in_set",
+      "kwargs": {
+        "column": "PAY_0",
+        "value_set": [
+          -2,
+          -1,
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ]
+      },
+      "meta": {},
+      "severity": "critical"
+    },
+    {
+      "type": "expect_column_values_to_be_in_set",
+      "kwargs": {
+        "column": "PAY_2",
+        "value_set": [
+          -2,
+          -1,
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ]
+      },
+      "meta": {},
+      "severity": "critical"
+    },
+    {
+      "type": "expect_column_values_to_be_in_set",
+      "kwargs": {
+        "column": "PAY_3",
+        "value_set": [
+          -2,
+          -1,
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ]
+      },
+      "meta": {},
+      "severity": "critical"
+    },
+    {
+      "type": "expect_column_values_to_be_in_set",
+      "kwargs": {
+        "column": "PAY_4",
+        "value_set": [
+          -2,
+          -1,
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ]
+      },
+      "meta": {},
+      "severity": "critical"
+    },
+    {
+      "type": "expect_column_values_to_be_in_set",
+      "kwargs": {
+        "column": "PAY_5",
+        "value_set": [
+          -2,
+          -1,
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ]
+      },
+      "meta": {},
+      "severity": "critical"
+    },
+    {
+      "type": "expect_column_values_to_be_in_set",
+      "kwargs": {
+        "column": "PAY_6",
+        "value_set": [
+          -2,
+          -1,
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ]
+      },
+      "meta": {},
+      "severity": "critical"
+    },
+    {
+      "type": "expect_column_values_to_be_between",
+      "kwargs": {
+        "column": "LIMIT_BAL",
+        "min_value": 1000.0,
+        "max_value": 5000000.0
+      },
+      "meta": {},
+      "severity": "critical"
+    },
+    {
+      "type": "expect_column_values_to_be_between",
+      "kwargs": {
+        "column": "AGE",
+        "min_value": 18.0,
+        "max_value": 100.0
+      },
+      "meta": {},
+      "severity": "critical"
+    },
+    {
+      "type": "expect_column_values_to_be_between",
+      "kwargs": {
+        "column": "BILL_AMT1",
+        "min_value": -1000000.0,
+        "max_value": 5000000.0
+      },
+      "meta": {},
+      "severity": "critical"
+    },
+    {
+      "type": "expect_column_values_to_be_between",
+      "kwargs": {
+        "column": "BILL_AMT2",
+        "min_value": -1000000.0,
+        "max_value": 5000000.0
+      },
+      "meta": {},
+      "severity": "critical"
+    },
+    {
+      "type": "expect_column_values_to_be_between",
+      "kwargs": {
+        "column": "BILL_AMT3",
+        "min_value": -1000000.0,
+        "max_value": 5000000.0
+      },
+      "meta": {},
+      "severity": "critical"
+    },
+    {
+      "type": "expect_column_values_to_be_between",
+      "kwargs": {
+        "column": "BILL_AMT4",
+        "min_value": -1000000.0,
+        "max_value": 5000000.0
+      },
+      "meta": {},
+      "severity": "critical"
+    },
+    {
+      "type": "expect_column_values_to_be_between",
+      "kwargs": {
+        "column": "BILL_AMT5",
+        "min_value": -1000000.0,
+        "max_value": 5000000.0
+      },
+      "meta": {},
+      "severity": "critical"
+    },
+    {
+      "type": "expect_column_values_to_be_between",
+      "kwargs": {
+        "column": "BILL_AMT6",
+        "min_value": -1000000.0,
+        "max_value": 5000000.0
+      },
+      "meta": {},
+      "severity": "critical"
+    },
+    {
+      "type": "expect_column_values_to_be_between",
+      "kwargs": {
+        "column": "PAY_AMT1",
+        "min_value": 0.0,
+        "max_value": 5000000.0
+      },
+      "meta": {},
+      "severity": "critical"
+    },
+    {
+      "type": "expect_column_values_to_be_between",
+      "kwargs": {
+        "column": "PAY_AMT2",
+        "min_value": 0.0,
+        "max_value": 5000000.0
+      },
+      "meta": {},
+      "severity": "critical"
+    },
+    {
+      "type": "expect_column_values_to_be_between",
+      "kwargs": {
+        "column": "PAY_AMT3",
+        "min_value": 0.0,
+        "max_value": 5000000.0
+      },
+      "meta": {},
+      "severity": "critical"
+    },
+    {
+      "type": "expect_column_values_to_be_between",
+      "kwargs": {
+        "column": "PAY_AMT4",
+        "min_value": 0.0,
+        "max_value": 5000000.0
+      },
+      "meta": {},
+      "severity": "critical"
+    },
+    {
+      "type": "expect_column_values_to_be_between",
+      "kwargs": {
+        "column": "PAY_AMT5",
+        "min_value": 0.0,
+        "max_value": 5000000.0
+      },
+      "meta": {},
+      "severity": "critical"
+    },
+    {
+      "type": "expect_column_values_to_be_between",
+      "kwargs": {
+        "column": "PAY_AMT6",
+        "min_value": 0.0,
+        "max_value": 5000000.0
+      },
+      "meta": {},
+      "severity": "critical"
+    },
+    {
+      "type": "expect_column_values_to_be_in_set",
+      "kwargs": {
+        "column": "default.payment.next.month",
+        "value_set": [
+          0,
+          1
+        ]
+      },
+      "meta": {},
+      "severity": "critical"
+    },
+    {
+      "type": "expect_column_mean_to_be_between",
+      "kwargs": {
+        "column": "default.payment.next.month",
+        "min_value": 0.05,
+        "max_value": 0.5
+      },
+      "meta": {},
+      "severity": "critical"
+    }
+  ],
+  "meta": {
+    "great_expectations_version": "1.24.1"
+  },
+  "notes": null
+}

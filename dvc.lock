@@ -1,0 +1,207 @@
+schema: '2.0'
+stages:
+  validate:
+    cmd: python -m src.data.validation data/raw/UCI_Credit_Card.csv --report 
+      reports/validation_raw.json --suite-out 
+      data/expectations/credit_data_suite.json
+    deps:
+    - path: data/raw/UCI_Credit_Card.csv
+      hash: md5
+      md5: 940b416bb13a9b24bb5c9e1589284005
+      size: 2862995
+    - path: src/config.py
+      hash: md5
+      md5: 1506048fc0aed9b6c3ffbdf1bedd724c
+      size: 1185
+    - path: src/data/validation.py
+      hash: md5
+      md5: dace674015f9e96d25ef8e39980fccc1
+      size: 7047
+    outs:
+    - path: data/expectations/credit_data_suite.json
+      hash: md5
+      md5: 3f528b074f7ecb7da788c32e61c4d240
+      size: 19037
+    - path: reports/validation_raw.json
+      hash: md5
+      md5: 2cbfcf75727dace4920fdb1eafe88469
+      size: 80
+  prepare:
+    cmd: python -m src.data.make_dataset data/raw/UCI_Credit_Card.csv 
+      data/processed
+    deps:
+    - path: data/raw/UCI_Credit_Card.csv
+      hash: md5
+      md5: 940b416bb13a9b24bb5c9e1589284005
+      size: 2862995
+    - path: reports/validation_raw.json
+      hash: md5
+      md5: 2cbfcf75727dace4920fdb1eafe88469
+      size: 80
+    - path: src/config.py
+      hash: md5
+      md5: 1506048fc0aed9b6c3ffbdf1bedd724c
+      size: 1185
+    - path: src/data/make_dataset.py
+      hash: md5
+      md5: 62f9002943f48ce054c20789fe9ea8c7
+      size: 3395
+    params:
+      params.yaml:
+        data.test_size: 0.2
+        seed: 42
+    outs:
+    - path: data/processed/summary.json
+      hash: md5
+      md5: d9c9fc4fef8de042c31bdf5bc9a54d60
+      size: 132
+    - path: data/processed/test.csv
+      hash: md5
+      md5: 24bfcbe3883b30c1cb5e6fde00052bf1
+      size: 539706
+    - path: data/processed/train.csv
+      hash: md5
+      md5: dd9c32e374cfab519a47be7047133627
+      size: 2156589
+  train:
+    cmd: python -m src.models.train
+    deps:
+    - path: data/processed/test.csv
+      hash: md5
+      md5: 24bfcbe3883b30c1cb5e6fde00052bf1
+      size: 539706
+    - path: data/processed/train.csv
+      hash: md5
+      md5: dd9c32e374cfab519a47be7047133627
+      size: 2156589
+    - path: src/config.py
+      hash: md5
+      md5: 1506048fc0aed9b6c3ffbdf1bedd724c
+      size: 1185
+    - path: src/features/build_features.py
+      hash: md5
+      md5: 0796d54d4e50f3ff8b2e9da56108ccd7
+      size: 5163
+    - path: src/models/experiments.py
+      hash: md5
+      md5: 90dbbf326a23530a6e9d6964a9604f69
+      size: 4497
+    - path: src/models/metrics.py
+      hash: md5
+      md5: 706f9f643fde822220726624fcce0d5f
+      size: 3856
+    - path: src/models/pipeline.py
+      hash: md5
+      md5: 0042418a27b40f5e6f3f55f65ba3c98a
+      size: 1826
+    - path: src/models/train.py
+      hash: md5
+      md5: 3abdeaeeac4dd6bcc3a44230ddee16ad
+      size: 12855
+    params:
+      params.yaml:
+        features:
+          age_bins:
+          - 20
+          - 25
+          - 30
+          - 35
+          - 40
+          - 50
+          - 60
+          - 100
+        mlflow:
+          tracking_uri: sqlite:///mlflow.db
+          experiment_name: credit-default-pd
+          registered_model_name: credit-default-pd
+        seed: 42
+        train:
+          cv_folds: 5
+          search_scoring: roc_auc
+          threshold_scoring: f1
+          n_jobs: -1
+          experiments:
+          - logreg_raw
+          - logreg_fe
+          - random_forest_fe
+          - gradient_boosting_fe
+          - hist_gb_raw
+          - hist_gb_fe
+    outs:
+    - path: models/model.joblib
+      hash: md5
+      md5: 901f714808e61efc24221c7407be3823
+      size: 924213
+    - path: models/model_meta.json
+      hash: md5
+      md5: 087b82e28e0c8001d42e05a0df0008f9
+      size: 687
+    - path: reports/experiments.csv
+      hash: md5
+      md5: 0eeb9c7d8474df0ffd9c60914930ba5d
+      size: 930
+  evaluate:
+    cmd: python -m src.models.evaluate
+    deps:
+    - path: data/processed/test.csv
+      hash: md5
+      md5: 24bfcbe3883b30c1cb5e6fde00052bf1
+      size: 539706
+    - path: data/processed/train.csv
+      hash: md5
+      md5: dd9c32e374cfab519a47be7047133627
+      size: 2156589
+    - path: models/model.joblib
+      hash: md5
+      md5: 901f714808e61efc24221c7407be3823
+      size: 924213
+    - path: models/model_meta.json
+      hash: md5
+      md5: 087b82e28e0c8001d42e05a0df0008f9
+      size: 687
+    - path: src/config.py
+      hash: md5
+      md5: 1506048fc0aed9b6c3ffbdf1bedd724c
+      size: 1185
+    - path: src/models/evaluate.py
+      hash: md5
+      md5: 112f794849805ae11e6a3a9d0cfd6d82
+      size: 4864
+    - path: src/models/metrics.py
+      hash: md5
+      md5: 706f9f643fde822220726624fcce0d5f
+      size: 3856
+    - path: src/models/predict.py
+      hash: md5
+      md5: 9c7bf89bfc0d55278a14478e01de5a30
+      size: 1989
+    - path: src/monitoring/drift.py
+      hash: md5
+      md5: 5aca7de2392078d9bae65ad3fa666bac
+      size: 4219
+    params:
+      params.yaml:
+        monitoring:
+          psi_bins: 10
+    outs:
+    - path: models/reference_profile.json
+      hash: md5
+      md5: 8a3c95b08faf62f48e70212d0ff6c245
+      size: 12527
+    - path: reports/figures
+      hash: md5
+      md5: fe02b7adda829d68c02e22c086233050.dir
+      size: 109954
+      nfiles: 4
+    - path: reports/metrics.json
+      hash: md5
+      md5: da95c7f094b4ba2ef0b177b445c79814
+      size: 213
+    - path: reports/plots/roc.csv
+      hash: md5
+      md5: d35a79f9bf596aa0c63fb725719cdf38
+      size: 2760
+    - path: reports/score_deciles.csv
+      hash: md5
+      md5: 7bfc6949fd5de8859e2028009509ab2d
+      size: 515

@@ -1,0 +1,87 @@
+stages:
+  validate:
+    cmd: >-
+      python -m src.data.validation data/raw/UCI_Credit_Card.csv
+      --report reports/validation_raw.json
+      --suite-out data/expectations/credit_data_suite.json
+    deps:
+      - src/config.py
+      - src/data/validation.py
+      - data/raw/UCI_Credit_Card.csv
+    outs:
+      - data/expectations/credit_data_suite.json:
+          cache: false
+      - reports/validation_raw.json:
+          cache: false
+
+  prepare:
+    cmd: python -m src.data.make_dataset data/raw/UCI_Credit_Card.csv data/processed
+    deps:
+      - src/config.py
+      - src/data/make_dataset.py
+      - data/raw/UCI_Credit_Card.csv
+      # Зависимость от отчёта валидации задаёт порядок: если данные не прошли
+      # проверку, validate падает и до подготовки дело не доходит.
+      - reports/validation_raw.json
+    params:
+      - seed
+      - data.test_size
+    outs:
+      - data/processed/train.csv
+      - data/processed/test.csv
+      - data/processed/summary.json:
+          cache: false
+
+  train:
+    cmd: python -m src.models.train
+    deps:
+      - src/config.py
+      - src/features/build_features.py
+      - src/models/pipeline.py
+      - src/models/experiments.py
+      - src/models/metrics.py
+      - src/models/train.py
+      - data/processed/train.csv
+      - data/processed/test.csv
+    params:
+      - seed
+      - features
+      - train
+      - mlflow
+    outs:
+      - models/model.joblib
+      - models/model_meta.json
+      - reports/experiments.csv:
+          cache: false
+
+  evaluate:
+    cmd: python -m src.models.evaluate
+    deps:
+      - src/config.py
+      - src/models/evaluate.py
+      - src/models/metrics.py
+      - src/models/predict.py
+      - src/monitoring/drift.py
+      - models/model.joblib
+      - models/model_meta.json
+      - data/processed/train.csv
+      - data/processed/test.csv
+    params:
+      - monitoring
+    outs:
+      - models/reference_profile.json
+      - reports/score_deciles.csv:
+          cache: false
+      - reports/figures:
+          cache: false
+    metrics:
+      - reports/metrics.json:
+          cache: false
+    plots:
+      - reports/plots/roc.csv:
+          cache: false
+          x: fpr
+          y: tpr
+          title: ROC-кривая на test
+          x_label: False Positive Rate
+          y_label: True Positive Rate
